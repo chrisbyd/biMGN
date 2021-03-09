@@ -118,7 +118,7 @@ class DualMGN(nn.Module):
         p1 = self.p1(x)  #[batch_size,2048,*,*]
         p2 = self.p2(x)  #[batch_size,2048,*,*]
         p3 = self.p3(x)  #[batch_size,2048,*,*]
-        print("Pa has shape",p1.shape)
+
 
         zg_p1 = self.maxpool_zg_p1(p1) #[batch_size, 2048,1, *]
         zg_p2 = self.maxpool_zg_p2(p2)  #[batch_size, 2048,1, *]
