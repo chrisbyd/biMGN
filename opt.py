@@ -11,10 +11,12 @@ parser.add_argument('--dataset_name',
                     help='the name of the dataset')
 parser.add_argument('--height',
                     default="384",
+                    type= int,
                     help='the height of the input image')
 
 parser.add_argument('--width',
                     default="128",
+                    type= int,
                     help='the width of the input image')
 
 parser.add_argument('--log_path',
@@ -45,6 +47,7 @@ parser.add_argument('--freeze',
 
 parser.add_argument('--weight',
                     default='weights/model.pt',
+
                     help='load weights ')
 
 parser.add_argument('--epoch',
@@ -66,12 +69,12 @@ parser.add_argument('--lr_scheduler',
                     help='MultiStepLR,decay the learning rate')
 
 parser.add_argument("--batchid",
-                    default=4,
+                    default=2,
                     type = int,
                     help='the batch for id')
 
 parser.add_argument("--batchimage",
-                    default=4,
+                    default=1,
                     type = int,
                     help='the batch of per id')
 

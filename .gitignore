@@ -8,7 +8,8 @@ __pycache__/
 data/
 logs/
 out /
-
+log/
+checkpoint/
 # Distribution / packaging
 .Python
 build/

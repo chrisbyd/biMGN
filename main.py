@@ -150,7 +150,7 @@ if __name__ == '__main__':
         'cuhk02' : 256 ,
         'DukeMTMC' :756
     }
-    data = Data()
+    data = Data(opt=opt)
     num_classes = number_of_classes[opt.dataset_name]
     if opt.arch == 'mgn':
         model = MGN(num_classes = num_classes)
