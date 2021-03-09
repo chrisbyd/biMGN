@@ -53,7 +53,7 @@ class Main():
             loss.backward()
             self.optimizer.step()
 
-    def evaluate(self):
+    def evaluate(self,epoch = 0):
 
         self.model.eval()
 
@@ -82,7 +82,7 @@ class Main():
         self.logger.info('[With    Re-Ranking] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(m_ap, r[0], r[2], r[4], r[9]))
         results = [item for item in r[:20]] + [m_ap]
-        results_to_excel(results, opt.arch + '_reranking', opt.dataset_name)
+        results_to_excel(results, opt.arch + '_reranking', opt.dataset_name, epoch)
         #########################no re rank##########################
         dist = cdist(qf, gf)
 
@@ -183,7 +183,7 @@ if __name__ == '__main__':
             main.train()
             if epoch % opt.test_interval == 0:
                 print('\nstart evaluate')
-                main.evaluate()
+                main.evaluate(epoch = epoch)
                 model_save_path = osp.join(opt.checkpoint_path, opt.arch)
                 os.makedirs(model_save_path, exist_ok= True)
                 torch.save(model.state_dict(), osp.join(model_save_path,'model_{}.pth'.format(epoch)))
