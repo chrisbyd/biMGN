@@ -10,6 +10,8 @@ python main.py \
     --batchid  5 \
     --batchimage 6 \
     --epoch 2  \
-    --test_interval 1
+    --test_interval 1 \
+    --gpu_devices 0,1
+
 
 
