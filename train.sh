@@ -2,7 +2,7 @@
 # arch ['mgn', 'dualmgn', 'res50']
 python main.py \
     --mode train \
-    --data_path ~/research_dataset/personreid/Market \
+    --data_path ~/research_dataset/person_dataset/Market \
     --dataset_name Market \
     --height 384 \
     --width 128 \
