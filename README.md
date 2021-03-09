@@ -1,122 +1,92 @@
-# Self-similarity Grouping: A Simple Unsupervised Cross Domain Adaptation Approach for Person Re-identificatio(SSG)
-Implementation of the paper [Self-similarity Grouping: A Simple Unsupervised Cross Domain Adaptation Approach for Person Re-identification](https://arxiv.org/abs/1811.10144), ICCV 2019 (Oral)
+# Multiple Granularity Network
+Implement of paper:[Learning Discriminative Features with Multiple Granularities for Person Re-Identification](https://arxiv.org/abs/1804.01438v1)
+
+## Dependencies
+
+- Python >= 3.5
+- PyTorch >= 0.4.0
+- torchvision
+- scipy
+- numpy
+- scikit_learn
 
 
-The SSG approach proposed in the paper is simple yet effective and achieves the state-of-arts on three re-ID datasets: Market1501, DukdMTMC and MSMT17.
 
-![Illustration of the Self-similarity Grouping.](./figs/framework.png)
+## Current Result
 
-<!-- ## Setup
+| Re-Ranking| backbone |  mAP | rank1 | rank3 | rank5 | rank10 |  
+| :------: | :------: |  :------: | :------: | :------: | :------: |  :------: |   
+| yes | resnet50 |  94.33 | 95.58 | 97.54 | 97.92 | 98.46 | 
+| no | resnet50 |  86.15 | 94.95 | 97.42 | 98.07 | 98.93 | 
 
-1. Datasets (source dataset and target dataset).
-2. Pre-trained (on source dataset) model.
 
-## Requirements
 
-- PyTorch -->
+## Data
 
-## Running the experiments
+The data structure would look like:
+```
+data/
+    bounding_box_train/
+    bounding_box_test/
+    query/
+```
+#### Market1501 
+Download from [here](http://www.liangzheng.org/Project/project_reid.html)
 
-### Step 1: Train on source dataset
+#### DukeMTMC-reID
+Download from [here](http://vision.cs.duke.edu/DukeMTMC/)
 
-Run `source_train.py` via
-
-```shell
-python source_train.py \
-    --dataset <name_of_source_dataset>\
-    --resume <dir_of_source_trained_model>\
-    --data_dir <dir_of_source_data>\
-    --logs_dir <dir_to_save_source_trained_model>
+#### CUHK03
+1. Download cuhk03 dataset from "http://www.ee.cuhk.edu.hk/~xgwang/CUHK_identification.html"
+2. Unzip the file and you will get the cuhk03_release dir include cuhk-03.mat
+3. Download "cuhk03_new_protocol_config_detected.mat" from "https://github.com/zhunzhong07/person-re-ranking/tree/master/evaluation/data/CUHK03"
+and put it with cuhk-03.mat. We need this new protocol to split the dataset.
+```
+python utils/transform_cuhk03.py --src <path/to/cuhk03_release> --dst <path/to/save>
 ```
 
-To replicate the results in the paper, you can download pre-trained models on Market1501, DukeMTMC and MSMT17 from [GoogleDrive](https://drive.google.com/file/d/1Z94qbsjuAQ9sLeEzURPstQxa3gluZIPJ/view?usp=sharing). There maybe some bugs in source_train.py, please refer to [DomainAdaptiveReID](https://github.com/LcDog/DomainAdaptiveReID) to obtained the pretrained model or just use the pretrained model provided by us.
-And you can find all models after adaptation from [GoogleDrive](https://drive.google.com/file/d/1BUp1fbjKTZGjL8WGCx3yUp2GXD10EdxC/view?usp=sharing). Our models can be trained with __PyTorch 0.4.1__ or __PyTorch 1.0__.
+NOTICE:You need to change num_classes in network depend on how many people in your train dataset! e.g. 751 in Market1501
 
-### Step 2: Run Self-similarity Grouping
+## Weights
 
-```shell
-python selftraining.py \
-    --src_dataset <name_of_source_dataset>\
-    --tgt_dataset <name_of_target_dataset>\
-    --resume <dir_of_source_trained_model>\
-    --iteration <number of iteration>\
-    --data_dir <dir_of_source_target_data>\
-    --logs_dir <dir_to_save_model_after_adaptation>\
-    --gpu-devices <gpu ids>\
-    --num-split <number of split>
+Pretrained weight download from [google drive](https://drive.google.com/open?id=16V7ZsflBbINHPjh_UVYGBVO6NuSxEMTi)
+or [baidu drive](https://pan.baidu.com/s/12AkumLX10hLx9vh_SQwdyw) password:mrl5
+## Train
+
+You can specify more parameters in opt.py
+
 ```
-Or just command
-```shell
-./run.sh
-```
-### Step 3: Run Clustering-guided Semi-Supervised Training
-```shell
-python semitraining.py \
-    --src_dataset <name_of_source_dataset>\
-    --tgt_dataset <name_of_target_dataset>\
-    --resume <dir_of_source_trained_model>\
-    --iteration <number of iteration>\
-    --data_dir <dir_of_source_target_data>\
-    --logs_dir <dir_to_save_model_after_adaptation>\
-    --gpu-devices <gpu ids>\
-    --num-split <number of split>\
-    --sample <sample method>
+python main.py --mode train --data_path <path/to/Market-1501-v15.09.15> 
 ```
 
-## Results
+## Evaluate
 
-### Step 1: After training on source dataset
+Use pretrained weight or your trained weight
 
-| Source Dataset | Rank-1 | mAP |
-| :--- | :---: | :---: |
-| DukeMTMC | 82.6 | 70.5 |
-| Market1501 | 92.5 | 80.8 |
-| MSMT17 | 73.6 | 48.6 |
+```
+python main.py --mode evaluate --data_path <path/to/Market-1501-v15.09.15> --weight <path/to/weight_name.pt> 
+```
 
-### Step 2: After adaptation
+## Visualize
 
-<!-- markdownlint-disable MD033 -->
-<table>
-    <tr>
-        <th rowspan="2">SRC --&gt; TGT</th>
-        <th colspan="2">Before Adaptation</th>
-        <th colspan="2">Adaptation by SSG</th>
-        <th colspan="2">Adaptation by SSG++</th>
-    </tr>
-    <tr>
-        <td>Rank-1</td>
-        <td>mAP</td>
-        <td>Rank-1</td>
-        <td>mAP</td>
-        <td>Rank-1</td>
-        <td>mAP</td>
-    </tr>
-    <tr><td>Market1501 --&gt; DukeMTMC</td><td>30.5</td><td>16.1</td><td>73.0</td><td>53.4</td><td>76.0</td><td>60.3</td></tr>
-    <tr><td>DukeMTMC --&gt; Market1501</td><td>54.6</td><td>26.6</td><td>80.0</td><td>58.3</td><td>86.2</td><td>68.7</td></tr>
-    <tr><td>Market1501 --&gt; MSMT17 </td><td>8.6</td><td>2.7</td><td>31.6</td><td>13.2</td><td>37.6</td><td>16.6</td></tr>
-    <tr><td>DukeMTMC --&gt; MSMT17 </td><td>12.38</td><td>3.82</td><td>32.2</td><td>13.3</td><td>41.6</td><td>18.3</td></tr>
+Visualize rank10 query result of one image(query from bounding_box_test)
 
+Extract features will take a few munutes, or you can save features as .mat file for multiple uses
 
-</table>
+![image](https://s1.ax1x.com/2018/11/27/FV9xyj.png)
 
-## Issues
-* The pre-trained model is trained with Pytorch 0.4.1, there may be some  error when loading it by Pytorch with higher version. This [link](https://github.com/CSAILVision/places365/issues/25#issuecomment-333871990) should be helpful
-* The source_training.py codes may have some bugs, I suggest you directly using our pretrained baseline model. And I will fix the bugs soon.
-* To reproduce results listed in paper, I recommend to use two GPUs with batch size of 32. And in general, the experimental results may have be a little different from the results listed in paper (+/-1%).
+```
+python main.py --mode vis --query_image <path/to/query_image> --weight <path/to/weight_name.pt> 
+```
 
-## Acknowledgement
-
-Our code is based on [open-reid](https://github.com/Cysu/open-reid) and [DomainAdaptiveReID](https://github.com/LcDog/DomainAdaptiveReID).
 
 ## Citation
-If you find the code helpful in your resarch or work, please cite the following paper.
-```
-@InProceedings{Fu_2019_ICCV,
-author = {Fu, Yang and Wei, Yunchao and Wang, Guanshuo and Zhou, Yuqian and Shi, Honghui and Huang, Thomas S.},
-title = {Self-Similarity Grouping: A Simple Unsupervised Cross Domain Adaptation Approach for Person Re-Identification},
-booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
-month = {October},
-year = {2019}
+
+```text
+@ARTICLE{2018arXiv180401438W,
+    author = {{Wang}, G. and {Yuan}, Y. and {Chen}, X. and {Li}, J. and {Zhou}, X.},
+    title = "{Learning Discriminative Features with Multiple Granularities for Person Re-Identification}",
+    journal = {ArXiv e-prints},
+    year = 2018,
 }
 ```
-
