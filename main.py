@@ -11,7 +11,7 @@ import torch
 from torch.optim import lr_scheduler
 
 from opt import opt
-from data import Data
+from dataset import Data
 from network import MGN,DualMGN
 from network import create
 from loss import mgnLoss, res50Loss
@@ -31,8 +31,8 @@ class Main():
         self.train_loader = data.train_loader
         self.test_loader = data.test_loader
         self.query_loader = data.query_loader
-        self.testset = data.testset
-        self.queryset = data.queryset
+        self.testset = data.dataset.gallery
+        self.queryset = data.dataset.query
         self.model = model
         # self.model = model.to('cuda')
         self.loss = loss
@@ -45,7 +45,7 @@ class Main():
         self.scheduler.step()
 
         self.model.train()
-        for batch, (inputs, labels) in tqdm(enumerate(self.train_loader)):
+        for batch, (inputs, labels,_,_) in tqdm(enumerate(self.train_loader)):
             inputs = inputs.to('cuda')
             labels = labels.to('cuda')
             self.optimizer.zero_grad()
@@ -61,13 +61,16 @@ class Main():
         print('extract features, this may take a few minutes')
         qf = extract_feature(self.model, tqdm(self.query_loader)).numpy()
         gf = extract_feature(self.model, tqdm(self.test_loader)).numpy()
-
+        query_ids = [id for _,id,_,_ in self.queryset]
+        gallery_ids = [id for _,id,_,_ in self.testset]
+        query_cams = [camid for _,_,camid,_ in self.queryset]
+        gallery_cams = [camid for _,_,camid,_ in self.testset]
         def rank(dist):
-            r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
+            r = cmc(dist, query_ids, gallery_ids, query_cams, gallery_cams,
                     separate_camera_set=False,
                     single_gallery_shot=False,
                     first_match_break=True)
-            m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
+            m_ap = mean_ap(dist, query_ids, gallery_ids, query_cams, gallery_cams)
 
             return r, m_ap
 
@@ -152,7 +155,8 @@ if __name__ == '__main__':
         'DukeMTMC' :756
     }
     data = Data(opt=opt)
-    num_classes = number_of_classes[opt.dataset_name]
+    num_classes = data.num_classes
+
     model = create(opt.arch, num_classes = num_classes)
     model = nn.DataParallel(model).cuda()
     logger_name = '{}_{}_{}_{}_{}_train'.format(opt.arch, opt.dataset_name, opt.height, opt.width, opt.lr)
@@ -173,7 +177,7 @@ if __name__ == '__main__':
 
         for epoch in tqdm(range(1, opt.epoch + 1)):
             print('\nepoch', epoch)
-        #    main.train()
+            main.train()
             if epoch % opt.test_interval == 0:
                 print('\nstart evaluate')
                 main.evaluate(epoch = epoch)

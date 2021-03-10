@@ -68,18 +68,18 @@ parser.add_argument('--lr_scheduler',
                     default=[320, 380],
                     help='MultiStepLR,decay the learning rate')
 
-parser.add_argument("--batchid",
-                    default=2,
+parser.add_argument("--batch_size",
+                    default=6,
                     type = int,
                     help='the batch for id')
 
-parser.add_argument("--batchimage",
-                    default=1,
+parser.add_argument("--num_instances",
+                    default=4,
                     type = int,
                     help='the batch of per id')
 
 parser.add_argument("--batchtest",
-                    default=8,
+                    default=60,
                     help='the batch size for test')
 
 parser.add_argument("--gpu_devices",
