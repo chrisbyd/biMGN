@@ -28,7 +28,7 @@ parser.add_argument('--checkpoint_path',
                     help='the width of the input image')
 
 parser.add_argument('--arch',
-                    default='mgn', choices=['mgn', 'dualmgn', 'res50'],
+                    default='mgn', choices=['mgn', 'dualmgn', 'res50','dualmgnv'],
                     help='the backbone of the model')
 
 

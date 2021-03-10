@@ -5,11 +5,13 @@ __pycache__/
 
 # C extensions
 *.so
-data/
-logs/
+
+log/
 out /
 log/
 checkpoint/
+
+*.xlsx
 # Distribution / packaging
 .Python
 build/
