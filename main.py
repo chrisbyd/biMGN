@@ -14,7 +14,7 @@ from opt import opt
 from dataset import Data
 from network import MGN,DualMGN
 from network import create
-from loss import mgnLoss, res50Loss
+from loss import mgnLoss, res50Loss, dualmgnvLoss
 from utils.get_optimizer import get_optimizer
 from utils.extract_feature import extract_feature
 from utils.metrics import mean_ap, cmc, re_ranking
@@ -166,6 +166,8 @@ if __name__ == '__main__':
         loss = mgnLoss(logger)
     elif opt.arch in ['res50']:
         loss = res50Loss(logger)
+    elif opt.arch == 'dualmgnv':
+        loss = dualmgnvLoss(logger)
     else:
         raise NotImplementedError("The backbone is not supported")
 

@@ -87,7 +87,7 @@ class DualMGNV(nn.Module):
         self._init_fc(self.fc_id_256_2_2)
 
         # # initialize weight for horizontal
-        self._init_fc(self.fc_hid_2048_0)
+     #   self._init_fc(self.fc_hid_2048_0)
         self._init_fc(self.fc_hid_2048_1)
         self._init_fc(self.fc_hid_2048_2)
 
