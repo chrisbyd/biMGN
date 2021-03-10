@@ -1,11 +1,12 @@
 from .mgn import MGN
 from .resnet import *
 from .dualmgn import DualMGN
-
+from .dualmgnv import DualMGNV
 __factory = {
     #'resnet50' : resnet50,
     'mgn' : MGN,
-    'dualmgn' : DualMGN
+    'dualmgn' : DualMGN,
+    'dualmgnv' : DualMGNV
 }
 
 

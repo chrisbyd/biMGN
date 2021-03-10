@@ -13,6 +13,7 @@ from torch.optim import lr_scheduler
 from opt import opt
 from data import Data
 from network import MGN,DualMGN
+from network import create
 from loss import mgnLoss, res50Loss
 from utils.get_optimizer import get_optimizer
 from utils.extract_feature import extract_feature
@@ -88,7 +89,7 @@ class Main():
 
         r, m_ap = rank(dist)
         results = [item for item in r[:20]] + [m_ap]
-        results_to_excel(results, opt.arch, opt.dataset_name)
+        results_to_excel(results, opt.arch, opt.dataset_name,epoch)
 
         self.logger.info('[Without Re-Ranking] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(m_ap, r[0], r[2], r[4], r[9]))
@@ -152,15 +153,7 @@ if __name__ == '__main__':
     }
     data = Data(opt=opt)
     num_classes = number_of_classes[opt.dataset_name]
-    if opt.arch == 'mgn':
-        model = MGN(num_classes = num_classes)
-    elif opt.arch == 'dualmgn':
-        model = DualMGN(num_classes = num_classes)
-    elif opt.arch == 'res50':
-        pass
-    else:
-        raise NotImplementedError('The architecture is not implemented')
-
+    model = create(opt.arch, num_classes = num_classes)
     model = nn.DataParallel(model).cuda()
     logger_name = '{}_{}_{}_{}_{}_train'.format(opt.arch, opt.dataset_name, opt.height, opt.width, opt.lr)
     logger = setup_logger(logger_name, save_dir=opt.log_path, if_train=True)
@@ -180,7 +173,7 @@ if __name__ == '__main__':
 
         for epoch in tqdm(range(1, opt.epoch + 1)):
             print('\nepoch', epoch)
-            main.train()
+        #    main.train()
             if epoch % opt.test_interval == 0:
                 print('\nstart evaluate')
                 main.evaluate(epoch = epoch)
