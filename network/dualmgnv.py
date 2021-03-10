@@ -120,8 +120,8 @@ class DualMGNV(nn.Module):
         p1 = self.p1(x)  #[batch_size,2048,*,*]
         p2 = self.p2(x)  #[batch_size,2048,*,*]
         p3 = self.p3(x)  #[batch_size,2048,*,*]
-        hp2 = self.p4(x)
-        hp3 = self.p5(x)
+        hp2 = self.hp2(x)
+        hp3 = self.hp3(x)
 
 
         zg_p1 = self.maxpool_zg_p1(p1) #[batch_size, 2048,1, *]
@@ -131,14 +131,14 @@ class DualMGNV(nn.Module):
         hg_p3 = self.maxpool_ho_p3(hp3)
 
         zp2 = self.maxpool_zp2(p2) #[batch_size, 2048,2, *]
-        hp2 = self.maxpool_hp2(p2)
+        hp2 = self.maxpool_hp2(hp2)
         z0_p2 = zp2[:, :, 0:1, :]  #[batch_size, 2048,1, *]
         z1_p2 = zp2[:, :, 1:2, :]  #[batch_size, 2048,1, *]
         h0_p2 = hp2[:,:,:,0:1]
         h1_p2 = hp2[:,:,:,1:2]
 
         zp3 = self.maxpool_zp3(p3) #[batch_size, 2048,3, *]
-        hp3 = self.maxpool_hp3(p3)
+        hp3 = self.maxpool_hp3(hp3)
         z0_p3 = zp3[:, :, 0:1, :] #[batch_size, 2048,1, *]
         z1_p3 = zp3[:, :, 1:2, :] #[batch_size, 2048,1, *]
         z2_p3 = zp3[:, :, 2:3, :] #[batch_size, 2048,1, *]
