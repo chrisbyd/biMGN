@@ -36,6 +36,16 @@ parser.add_argument('--mode',
                     default='train', choices=['train', 'evaluate', 'vis'],
                     help='train or evaluate ')
 
+parser.add_argument('--resume',
+                    default= False,
+                    type= bool,
+                    help='train or evaluate ')
+
+parser.add_argument('--resume_epoch',
+                    default= 50,
+                    type= int,
+                    help='train or evaluate ')
+
 parser.add_argument('--query_image',
                     default='0001_c1s1_001051_00.jpg',
                     help='path to the image you want to query')

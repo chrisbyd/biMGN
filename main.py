@@ -177,6 +177,11 @@ if __name__ == '__main__':
 
     if opt.mode == 'train':
 
+        if opt.resume is True:
+            checkpoint_path = osp.join(opt.checkpoint_path, opt.arch)
+            model_path = osp.join(checkpoint_path, 'model_{}.pth'.format(opt.resume_epoch))
+            model.load_state_dict(torch.load(model_path))
+
         for epoch in tqdm(range(1, opt.epoch + 1)):
             print('\nepoch', epoch)
             main.train()
@@ -186,6 +191,8 @@ if __name__ == '__main__':
                 model_save_path = osp.join(opt.checkpoint_path, opt.arch)
                 os.makedirs(model_save_path, exist_ok= True)
                 torch.save(model.state_dict(), osp.join(model_save_path,'model_{}.pth'.format(epoch)))
+
+
 
     if opt.mode == 'evaluate':
         print('start evaluate')
