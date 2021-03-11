@@ -176,13 +176,14 @@ if __name__ == '__main__':
 
 
     if opt.mode == 'train':
-
+        start_epoch = 0
         if opt.resume is True:
             checkpoint_path = osp.join(opt.checkpoint_path, opt.arch)
             model_path = osp.join(checkpoint_path, 'model_{}.pth'.format(opt.resume_epoch))
             model.load_state_dict(torch.load(model_path))
+            start_epoch = opt.resume_epoch +1
 
-        for epoch in tqdm(range(1, opt.epoch + 1)):
+        for epoch in tqdm(range(start_epoch, opt.epoch + 1)):
             print('\nepoch', epoch)
             main.train()
             if epoch % opt.test_interval == 0:
